@@ -1,5 +1,3 @@
-import com.sun.tracing.dtrace.ArgsAttributes;
-
 public class OX {
     String table[][] = {
             {" ", "0", "1", "2"},
@@ -9,9 +7,17 @@ public class OX {
     };
 
     private String currentPlayer;
+    private int turncount;
+    private int scoreX;
+    private int scoreO;
+    private int scoreDraw;
 
     public OX() {
         currentPlayer = "X";
+        turncount = 0;
+        scoreX = 0;
+        scoreO = 0;
+        scoreDraw = 0;
     }
 
     public String getTableString() {
@@ -46,6 +52,18 @@ public class OX {
         } catch (ArrayIndexOutOfBoundsException e) {
             return false;
         }
+        turncount++;
+        if (checkWin(col, row)) {
+            if (currentPlayer.equals("X")) {
+                scoreX++;
+            } else if (currentPlayer.equals("O")) {
+                scoreO++;
+            }
+        }
+
+        if (isDraw()) {
+            scoreDraw++;
+        }
 
         return true;
     }
@@ -58,4 +76,90 @@ public class OX {
 
     }
 
+    public boolean checkWin(int col, int row) {
+        /* check Colwin */
+        boolean colWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (!table[i + 1][col + 1].equals(currentPlayer)) {
+                colWin = false;
+            }
+        }
+        if (colWin) {
+            return true;
+        }
+
+        /* check Rowwin */
+        boolean rowWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (!table[row + 1][i + 1].equals(currentPlayer)) {
+                rowWin = false;
+            }
+        }
+        if (rowWin) {
+            return true;
+        }
+
+        /* Check EsWin */
+        boolean esWin = true;
+        for (int i = 0; i < 3; i++) {
+            if (!table[i + 1][i + 1].equals(currentPlayer)) {
+                esWin = false;
+            }
+        }
+        if (esWin) {
+            return true;
+        }
+
+        /* Check ssWin */
+        boolean ssWin = true;
+
+        /* col,row -> 2,0 1,1 0,2 */
+        /* row,col -> 1,3 2,2 3,1 */
+
+        for (int i = 0; i < 3; i++) {
+            if (!table[i + 1][3 - i].equals(currentPlayer)) {
+                ssWin = false;
+            }
+        }
+        if (ssWin) {
+            return true;
+        }
+
+
+        return false;
+    }
+
+    public void reset() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                table[i + 1][j + 1] = "-";
+            }
+        }
+        currentPlayer = "X";
+        turncount = 0;
+    }
+
+    public int getTurnCount() {
+        return turncount;
+    }
+
+    public boolean isDraw() {
+        if (turncount < 9) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public int getScoreX() {
+        return scoreX;
+    }
+
+    public int getScoreO() {
+        return scoreO;
+    }
+
+    public int getScoreDraw() {
+        return scoreDraw;
+    }
 }
